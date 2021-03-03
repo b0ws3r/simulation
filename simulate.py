@@ -21,11 +21,11 @@ pi = numpy.pi
 
 
 BL_amplitude = pi/4
-BL_frequency = 100/(simulationSteps / (2*pi))
+BL_frequency = -100/(simulationSteps / (2*pi))
 BL_phaseOffset = 0
 
 FL_amplitude = pi/4
-FL_frequency = 10/(simulationSteps / (2*pi))
+FL_frequency = -10/(simulationSteps / (2*pi))
 FL_phaseOffset = 0
 
 #Arrays for storing data
@@ -49,13 +49,13 @@ for x in range(0, simulationSteps):
 		,jointName = "Torso_backLeg"
 		,controlMode = p.POSITION_CONTROL
 		,targetPosition = backLegTargetAngles[x]
-		,maxForce = 30)
+		,maxForce = 25)
 	pyrosim.Set_Motor_For_Joint(
 		bodyIndex = robot
 		,jointName = "Torso_frontLeg"
 		,controlMode = p.POSITION_CONTROL
 		,targetPosition = frontLegTargetAngles[x]
-		,maxForce = 30)
+		,maxForce = 25)
 	
 #Save vectors to file for use in analyze.py
 numpy.save("data/frontLegTargetAngles.npy", frontLegTargetAngles)
