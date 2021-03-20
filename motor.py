@@ -4,7 +4,8 @@ import pybullet as p
 import pyrosim.pyrosim as pyrosim
 
 class MOTOR:
-    def __init__(self, jointName, frequency, amplitude, offset):
+    def __init__(self, jointName, frequency, amplitude, offset, nn):
+        self.nn = nn
         self.jointName = jointName
         self.targetValues = numpy.zeros(c.simulationSteps)
         self.frequency = frequency
@@ -12,13 +13,17 @@ class MOTOR:
         self.offset = offset
 
     def Set_Value(self, t, robot):
-        self.targetValues[t] = self.amplitude * numpy.sin(self.frequency * t + self.offset)
+        for neuronName in self.nn.Get_Neuron_Names():
+            if self.nn.Is_Motor_Neuron(neuronName):
+                jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
+                desiredAngle = self.nn.Get_Value_Of(neuronName)
+                print("jointName: " + jointName)
+                print("neuronName: " + neuronName)
+                print("desiredAngle: " + str(desiredAngle))
+
         pyrosim.Set_Motor_For_Joint(
             bodyIndex=robot
             , jointName=self.jointName
             , controlMode=p.POSITION_CONTROL
-            , targetPosition=self.targetValues[t]
+            , targetPosition=desiredAngle
             , maxForce=25)
-
-    def Save_Values(self): #Save vectors to file for use in analyze.py
-        numpy.save("data/" + self.jointName + ".npy", self.targetValues)

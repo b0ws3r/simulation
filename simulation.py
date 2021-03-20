@@ -21,6 +21,7 @@ class SIMULATION:
 			p.stepSimulation()
 			self.robot.Sense(t)
 			self.robot.Act(t)
+			self.robot.Think(t)
 
 	def __del__(self):
 		p.disconnect()
