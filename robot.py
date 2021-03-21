@@ -14,6 +14,8 @@ class ROBOT:
 		self.robot = bodyId = p.loadURDF("body.urdf")
 		pyrosim.Prepare_To_Simulate("body.urdf")
 		self.Prepare_To_Sense()
+		for jointName in pyrosim.jointNamesToIndices:
+			self.motors[jointName] = MOTOR(jointName, self.nn)
 
 	def Prepare_To_Sense(self):
 		for linkName in pyrosim.linkNamesToIndices:
@@ -23,12 +25,14 @@ class ROBOT:
 		for sensor in self.sensors:
 			self.sensors[sensor].Get_Value(t)
 
-	def Act(self, desiredAngle):
-		for motor in self.motors:
-			self.motors[motor].Set_Value(desiredAngle, self.robot)
-
-	def Think(self, t):
+	def Think(self):
 		self.nn.Update()
 		self.nn.Print()
+
+	def Act(self):
+		for motor in self.motors:
+			self.motors[motor].Set_Value(self.robot)
+
+
 
 

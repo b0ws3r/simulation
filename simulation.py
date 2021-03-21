@@ -11,7 +11,7 @@ class SIMULATION:
 		# Init pybullet simulation components (world, plane, robot, etc.)
 		self.physicsClient = p.connect(p.GUI)
 		p.setAdditionalSearchPath(pybullet_data.getDataPath())
-		p.setGravity(0,0,-9.8)
+		p.setGravity(0, 0, -9.8)
 		self.world = WORLD()
 		self.robot = ROBOT()
 
@@ -20,8 +20,8 @@ class SIMULATION:
 			time.sleep(0.016667)
 			p.stepSimulation()
 			self.robot.Sense(t)
-			self.robot.Think(t)
-			self.robot.Act(t)
+			self.robot.Think()
+			self.robot.Act()
 
 	def __del__(self):
 		p.disconnect()
