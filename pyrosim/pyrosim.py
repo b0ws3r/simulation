@@ -20,9 +20,9 @@ URDF_FILETYPE = 1
 
 NNDF_FILETYPE   = 2
 
-# global availableLinkIndex
+global motorNeurons
+global sensorNeurons
 
-# global linkNamesToIndices
 
 def End():
 
@@ -143,11 +143,12 @@ def Send_Joint(name,parent,child,type,position):
     joint.Save(f)
 
 def Send_Motor_Neuron(name,jointName):
-
+    global motorNeurons
+    motorNeurons.append(name)
     f.write('    <neuron name = "' + str(name) + '" type = "motor"  jointName = "' + jointName + '" />\n')
 
 def Send_Sensor_Neuron(name,linkName):
-
+    sensorNeurons.append(name)
     f.write('    <neuron name = "' + str(name) + '" type = "sensor" linkName = "' + linkName + '" />\n')
 
 def Send_Synapse( sourceNeuronName , targetNeuronName , weight ):
@@ -235,8 +236,11 @@ def Start_URDF(filename):
 
 def Start_Model(modelName,pos):
 
-    global model 
-
+    global model
+    global sensorNeurons
+    sensorNeurons = []
+    global motorNeurons
+    motorNeurons = []
     model = MODEL(modelName,pos)
 
     model.Save_Start_Tag(f)

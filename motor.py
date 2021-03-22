@@ -14,9 +14,9 @@ class MOTOR:
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
                 desiredAngle = self.nn.Get_Value_Of(neuronName)
-                print("jointName: " + jointName)
-                print("neuronName: " + neuronName)
-                print("desiredAngle: " + str(desiredAngle))
+                # print("jointName: " + jointName)
+                # print("neuronName: " + neuronName)
+                # print("desiredAngle: " + str(desiredAngle))
 
                 pyrosim.Set_Motor_For_Joint(
                     bodyIndex=robot
