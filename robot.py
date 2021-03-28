@@ -33,6 +33,13 @@ class ROBOT:
 		for motor in self.motors:
 			self.motors[motor].Set_Value(self.robot)
 
+	def Get_Fitness(self):
+		stateOfLink0 = p.getLinkState(self.robot, 0)
+		print("Get_Fitness state of Link 0: " + str(stateOfLink0))
+		positionOfLink0 = stateOfLink0[0]
+		xCoordinateOfLink0 = positionOfLink0[0]
+		f = open("fitness.txt", "w")
+		f.write(str(xCoordinateOfLink0))
 
-
-
+		print("Position of Link 0: " + str(positionOfLink0))
+		exit()

@@ -7,9 +7,10 @@ import time
 
 
 class SIMULATION:
-	def __init__(self):
+	def __init__(self, directOrGUI):
 		# Init pybullet simulation components (world, plane, robot, etc.)
-		self.physicsClient = p.connect(p.GUI)
+		mode = p.DIRECT if directOrGUI == "DIRECT" else p.GUI
+		self.physicsClient = p.connect(mode)
 		p.setAdditionalSearchPath(pybullet_data.getDataPath())
 		p.setGravity(0, 0, -9.8)
 		self.world = WORLD()
@@ -22,6 +23,9 @@ class SIMULATION:
 			self.robot.Sense(t)
 			self.robot.Think()
 			self.robot.Act()
+
+	def Get_Fitness(self):
+		self.robot.Get_Fitness()
 
 	def __del__(self):
 		p.disconnect()
