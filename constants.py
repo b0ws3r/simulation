@@ -5,7 +5,8 @@ import numpy
 simulationSteps = 1000
 pi = numpy.pi
 
-numberOfGenerations = 50
+numberOfGenerations = 10
+populationSize = 10
 
 BL_amplitude = pi/6
 BL_frequency = -10/(simulationSteps / (2*pi))
@@ -14,7 +15,6 @@ BL_phaseOffset = 0
 FL_amplitude = pi/6
 FL_frequency = -10/(simulationSteps / (2*pi))
 FL_phaseOffset = 0
-
 
 #Robot size/pos constants
 length = 1

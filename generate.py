@@ -20,19 +20,19 @@ def createRobot():
 # 	pyrosim.Send_Cube(name="frontLeg", pos=[.5, 0, -.5], size=[length, width, height])
 # 	pyrosim.End()
 
-# def Generate_Brain():
-# 	pyrosim.Start_NeuralNetwork("brain.nndf")
-# 	pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
-# 	pyrosim.Send_Sensor_Neuron(name=1, linkName="backLeg")
-# 	pyrosim.Send_Sensor_Neuron(name=2, linkName="frontLeg")
-# 	pyrosim.Send_Motor_Neuron(name=3, jointName="Torso_backLeg")
-# 	pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_frontLeg")
-# 	for i in pyrosim.sensorNeurons:
-# 		for j in pyrosim.motorNeurons:
-# 			weight = 2*random.random()-1
-# 			pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=j, weight=weight)
-# 	pyrosim.End()
+def Generate_Brain(solutionID):
+	pyrosim.Start_NeuralNetwork("brain" + str(solutionID) + ".nndf")
+	pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
+	pyrosim.Send_Sensor_Neuron(name=1, linkName="backLeg")
+	pyrosim.Send_Sensor_Neuron(name=2, linkName="frontLeg")
+	pyrosim.Send_Motor_Neuron(name=3, jointName="Torso_backLeg")
+	pyrosim.Send_Motor_Neuron(name=4, jointName="Torso_frontLeg")
+	for i in pyrosim.sensorNeurons:
+		for j in pyrosim.motorNeurons:
+			weight = 2*random.random()-1
+			pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=j, weight=weight)
+	pyrosim.End()
 
 
-createWorld()
+# createWorld()
 createRobot()

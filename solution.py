@@ -3,12 +3,13 @@ import constants as c
 import numpy
 import random
 import os
-
+import time
 
 class SOLUTION:
 
-    def __init__(self):
+    def __init__(self, nextAvailableID):
         c = numpy.zeros(2)
+        self.myID = nextAvailableID
         self.weights = numpy.array([c, c, c])
         for i in range(0, len(self.weights)):
             for j in range(0, len(c)):
@@ -19,14 +20,27 @@ class SOLUTION:
         self.Create_World()
         self.Create_Body()
         self.Create_Brain()
-        os.system("python3 simulate.py " + directOrGui)
-        f = open("fitness.txt")
+        os.system("python3 simulate.py " + directOrGui + " " + str(self.myID) + " &")
+
+    def Start_Simulation(self, directOrGui):
+        self.Create_World()
+        self.Create_Body()
+        self.Create_Brain()
+        os.system("python3 simulate.py " + directOrGui + " " + str(self.myID) + " &")
+
+
+    def Wait_For_Simulation_To_End(self):
+        fitnessFileName = "fitness" + str(self.myID) + ".txt"
+        while not os.path.exists(fitnessFileName):
+            time.sleep(0.01)
+        f = open(fitnessFileName)
         xcoord_Link0 = float(f.read())
         self.fitness = xcoord_Link0
+        os.system("rm " + fitnessFileName)
 
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")
-        pyrosim.Send_Cube(name="Boc.x", pos=[c.x - 3, c.y - 3, c.z], size=[c.length, c.width, c.height])
+        pyrosim.Send_Cube(name="Box", pos=[c.x - 3, c.y - 3, c.z], size=[c.length, c.width, c.height])
         pyrosim.End()
 
     def Create_Body(self):
@@ -39,7 +53,7 @@ class SOLUTION:
         pyrosim.End()
 
     def Create_Brain(self):
-        pyrosim.Start_NeuralNetwork("brain.nndf")
+        pyrosim.Start_NeuralNetwork("brain" + str(self.myID) + ".nndf")
         pyrosim.Send_Sensor_Neuron(name=0, linkName="Torso")
         pyrosim.Send_Sensor_Neuron(name=1, linkName="backLeg")
         pyrosim.Send_Sensor_Neuron(name=2, linkName="frontLeg")
@@ -48,9 +62,13 @@ class SOLUTION:
         for i in range(0, len(self.weights)):
             for j in range(0, len(self.weights[i])):
                 pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=j+3, weight=self.weights[i][j])
+
         pyrosim.End()
 
     def Mutate(self):
         synapseToMutate = random.randint(-1, 1)
         preOrPostSynapticNeuron = random.randint(0, 1)
         self.weights[synapseToMutate][preOrPostSynapticNeuron] = random.random() * 2 - 1
+    
+    def Set_ID(self, nextAvailableID):
+        self.myID = nextAvailableID
