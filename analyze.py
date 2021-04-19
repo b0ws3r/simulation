@@ -1,9 +1,9 @@
 import numpy
 import matplotlib.pyplot as pyplot
 
-frontLegSensorValues = numpy.load('data/frontLegSensorValues.npy')
-backLegSensorValues = numpy.load('data/backLegSensorValues.npy')
-targetAngles = numpy.load('data/targetAngles.npy')
+frontLegSensorValues = numpy.load('data.nosync/frontLegSensorValues.npy')
+backLegSensorValues = numpy.load('data.nosync/backLegSensorValues.npy')
+targetAngles = numpy.load('data.nosync/targetAngles.npy')
 
 
 # pyplot.plot(backLegSensorValues, linewidth=1, label="Back leg sensor values")

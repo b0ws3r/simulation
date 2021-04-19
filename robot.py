@@ -40,9 +40,9 @@ class ROBOT:
 		# print("Get_Fitness state of Link 0: " + str(stateOfLink0))
 		positionOfLink0 = stateOfLink0[0]
 		xCoordinateOfLink0 = positionOfLink0[0]
-		tempFileName = "tmp" + str(self.solutionID) + ".txt"
+		solId = str(self.solutionID)
+		tempFileName = "data.nosync/tmp" + solId + ".txt"
 		f = open(tempFileName, "w")
 		f.write(str(xCoordinateOfLink0))
-		os.system("mv " + tempFileName + " fitness" + self.solutionID + ".txt")
-		# print("Position of Link 0: " + str(positionOfLink0))
+		os.system("mv " + tempFileName + " data.nosync/fitness" + solId + ".txt")
 		exit()

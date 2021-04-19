@@ -11,4 +11,4 @@ class SENSOR:
 		self.values[t] = pyrosim.Get_Touch_Sensor_Value_For_Link(self.linkName)
 
 	def Save_Values(self):  # Save vectors to file for use in analyze.py
-		numpy.save("data/" + self.linkName + ".npy", self.values)
+		numpy.save("data.nosync/" + self.linkName + ".npy", self.values)

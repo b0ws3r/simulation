@@ -22,5 +22,5 @@ class MOTOR:
                     bodyIndex=robot
                     , jointName=jointName
                     , controlMode=p.POSITION_CONTROL
-                    , targetPosition=desiredAngle
+                    , targetPosition=desiredAngle*c.motorJointRange
                     , maxForce=25)
