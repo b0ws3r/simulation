@@ -11,7 +11,7 @@ class SOLUTION:
 
     def __init__(self, nextAvailableID):
         self.myID = nextAvailableID
-        self.weights = numpy.zeros((c.numMotorNeurons, c.numSensorNeurons))
+        self.weights = numpy.zeros((c.numSensorNeurons, c.numMotorNeurons))
         self.sensorToHiddenWeights = numpy.zeros((c.numSensorNeurons))
         self.hiddenToMotorWeights = numpy.zeros((c.numMotorNeurons))
         for i in range(0, len(self.sensorToHiddenWeights)):
@@ -56,8 +56,8 @@ class SOLUTION:
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")
         sqr = 5
-        for i in range(-1* sqr,sqr):
-            for j in range(-1*sqr,sqr):
+        for i in range(-1 * sqr, sqr):
+            for j in range(-1*sqr, sqr):
                 height=numpy.random.rand()/2
                 pyrosim.Send_Cube(name="Box" + str(i) + "_" + str(j), pos=[c.x - i, c.y - j, height/2], size=[c.length, c.width, height])
         pyrosim.End()
@@ -116,25 +116,27 @@ class SOLUTION:
 
         for linkName in pyrosim.linkNamesToIndices:
             pyrosim.Send_Sensor_Neuron(name=nameIndex, linkName=linkName)
-            nameIndex+=1
+            nameIndex += 1
         for jointName in pyrosim.jointNamesToIndices:
             pyrosim.Send_Motor_Neuron(name=nameIndex, jointName=jointName)
-            nameIndex+=1
+            nameIndex += 1
 
-        hiddenNeuronNames = {}
-        for i in range(0,c.numHiddenNeurons):
-            pyrosim.Send_Hidden_Neuron(name=nameIndex)
-            hiddenNeuronNames[i] = nameIndex
-            nameIndex+=1
+        for i in range(0, c.numSensorNeurons):
+            for j in range(0, len(self.weights[i])):
+                pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=j+c.numSensorNeurons, weight=self.weights[i][j])
 
-        for hiddenNeuron in hiddenNeuronNames:
-            for i in range(0, len(self.sensorToHiddenWeights)):
-                pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=hiddenNeuronNames[hiddenNeuron], weight=self.sensorToHiddenWeights[i])
-
-            for i in range(0, len(self.hiddenToMotorWeights)):
-                pyrosim.Send_Synapse(sourceNeuronName=hiddenNeuronNames[hiddenNeuron], targetNeuronName=i+len(self.sensorToHiddenWeights), weight=self.hiddenToMotorWeights[i])
-
-        nameIndex = 0
+        # hiddenNeuronNames = {}
+        # for i in range(0, c.numHiddenNeurons):
+        #     pyrosim.Send_Hidden_Neuron(name=nameIndex)
+        #     hiddenNeuronNames[i] = nameIndex
+        #     nameIndex += 1
+        #
+        # for hiddenNeuron in hiddenNeuronNames:
+        #     for i in range(0, len(self.sensorToHiddenWeights)):
+        #         pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=hiddenNeuronNames[hiddenNeuron], weight=self.sensorToHiddenWeights[i])
+        #     for i in range(0, len(self.hiddenToMotorWeights)):
+        #         pyrosim.Send_Synapse(sourceNeuronName=hiddenNeuronNames[hiddenNeuron], targetNeuronName=i+len(self.sensorToHiddenWeights), weight=self.hiddenToMotorWeights[i])
+        #
         pyrosim.End()
 
     def Mutate(self):

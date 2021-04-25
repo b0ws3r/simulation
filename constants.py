@@ -4,7 +4,7 @@ import numpy
 simulationSteps = 1000
 pi = numpy.pi
 
-numberOfGenerations = 3
+numberOfGenerations = 5
 populationSize = 5
 
 numMotorNeurons = 8
@@ -18,7 +18,7 @@ FL_amplitude = pi/6
 FL_frequency = -10/(simulationSteps / (2*pi))
 FL_phaseOffset = 0
 
-motorJointRange = 0.2
+motorJointRange = 0.5
 #Robot size/pos constants
 length = 1
 width = 1
