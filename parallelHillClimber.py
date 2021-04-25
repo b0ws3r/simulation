@@ -1,19 +1,22 @@
 from solution import SOLUTION
 import constants as c
 import copy
+import numpy
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
         self.parents = {}
         self.nextAvailableID = 0
+        self.useHiddenNeurons = True
         for i in range(0, c.populationSize):
-            self.parents[i] = SOLUTION(self.nextAvailableID)
+            self.parents[i] = SOLUTION(self.nextAvailableID, useHiddenNeurons=self.useHiddenNeurons)
             self.nextAvailableID += 1
+        self.data = numpy.zeros((c.numberOfGenerations*c.populationSize, 2))
         
     def Evolve(self):
         self.Evaluate(self.parents)
         for currentGeneration in range(0, c.numberOfGenerations):
-            self.Evolve_For_OneGeneration()
+            self.Evolve_For_OneGeneration(currentGeneration)
 
     def Evaluate(self, solutions):
         for solution in solutions:
@@ -21,12 +24,17 @@ class PARALLEL_HILL_CLIMBER:
         for solution in solutions:
             solutions[solution].Wait_For_Simulation_To_End()
 
-    def Evolve_For_OneGeneration(self):
+    def Evolve_For_OneGeneration(self, currentGeneration):
         self.Spawn()
         self.Mutate()
         self.Evaluate(self.children)
+        self.Store_Data(currentGeneration)
         self.Select()
         self.Print()
+
+    def Store_Data(self, currentGeneration):
+        for parent in self.parents:
+            self.data[currentGeneration + parent] = [currentGeneration, self.children[parent].fitness - self.parents[parent].fitness]
 
     def Print(self):
         for parent in self.parents:
@@ -52,6 +60,9 @@ class PARALLEL_HILL_CLIMBER:
     def Show_Best(self):
         minValue = min(self.parents, key=(lambda k: self.parents[k].fitness))
         print(self.parents[minValue].fitness)
+        self.Store_Data(c.numberOfGenerations)
         self.parents[minValue].Start_Simulation("GUI")
+        synapseMode = "hidden" + str(c.numHiddenNeurons) if self.useHiddenNeurons == True else "original"
+        numpy.save("data.nosync/performancePlot_" + synapseMode + ".npy", self.data)
 
         pass

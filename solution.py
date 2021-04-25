@@ -9,22 +9,32 @@ import time
 
 class SOLUTION:
 
-    def __init__(self, nextAvailableID):
+    def __init__(self, nextAvailableID, useHiddenNeurons):
         self.myID = nextAvailableID
+        self.useHiddenNeurons = useHiddenNeurons
+
+        # Matrices to hold synaptic weights
         self.weights = numpy.zeros((c.numSensorNeurons, c.numMotorNeurons))
         self.sensorToHiddenWeights = numpy.zeros((c.numSensorNeurons))
         self.hiddenToMotorWeights = numpy.zeros((c.numMotorNeurons))
-        for i in range(0, len(self.sensorToHiddenWeights)):
-            self.sensorToHiddenWeights[i] = numpy.random.rand()
-        for i in range(0, len(self.hiddenToMotorWeights)):
-            self.hiddenToMotorWeights[i] = numpy.random.rand()
 
-        for i in range(0, len(self.weights)):
-            for j in range(0, len(self.weights[i])):
-                self.weights[i][j] = numpy.random.rand()
-        self.weights = self.weights*2-1
-        self.sensorToHiddenWeights = self.sensorToHiddenWeights*2-1
-        self.hiddenToMotorWeights = self.hiddenToMotorWeights*2-1
+        # Set them, depending whether we are using hidden neurons or not.
+        self.Set_Synaptic_Weights()
+
+    def Set_Synaptic_Weights(self):
+        if self.useHiddenNeurons:
+            for i in range(0, len(self.sensorToHiddenWeights)):
+                self.sensorToHiddenWeights[i] = numpy.random.rand()
+            for i in range(0, len(self.hiddenToMotorWeights)):
+                self.hiddenToMotorWeights[i] = numpy.random.rand()
+
+            self.sensorToHiddenWeights = self.sensorToHiddenWeights * 2 - 1
+            self.hiddenToMotorWeights = self.hiddenToMotorWeights * 2 - 1
+        else:
+            for i in range(0, len(self.weights)):
+                for j in range(0, len(self.weights[i])):
+                    self.weights[i][j] = numpy.random.rand()
+            self.weights = self.weights * 2 - 1
 
     def Evaluate(self, directOrGui):
         # self.Create_World()
@@ -51,7 +61,6 @@ class SOLUTION:
             print(fitnessFileName + " could not be read")
         finally:
             os.system("rm " + fitnessFileName)
-
 
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")
@@ -121,22 +130,23 @@ class SOLUTION:
             pyrosim.Send_Motor_Neuron(name=nameIndex, jointName=jointName)
             nameIndex += 1
 
-        for i in range(0, c.numSensorNeurons):
-            for j in range(0, len(self.weights[i])):
-                pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=j+c.numSensorNeurons, weight=self.weights[i][j])
+        if(self.useHiddenNeurons):
+            hiddenNeuronNames = {}
+            for i in range(0, c.numHiddenNeurons):
+                pyrosim.Send_Hidden_Neuron(name=nameIndex)
+                hiddenNeuronNames[i] = nameIndex
+                nameIndex += 1
 
-        # hiddenNeuronNames = {}
-        # for i in range(0, c.numHiddenNeurons):
-        #     pyrosim.Send_Hidden_Neuron(name=nameIndex)
-        #     hiddenNeuronNames[i] = nameIndex
-        #     nameIndex += 1
-        #
-        # for hiddenNeuron in hiddenNeuronNames:
-        #     for i in range(0, len(self.sensorToHiddenWeights)):
-        #         pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=hiddenNeuronNames[hiddenNeuron], weight=self.sensorToHiddenWeights[i])
-        #     for i in range(0, len(self.hiddenToMotorWeights)):
-        #         pyrosim.Send_Synapse(sourceNeuronName=hiddenNeuronNames[hiddenNeuron], targetNeuronName=i+len(self.sensorToHiddenWeights), weight=self.hiddenToMotorWeights[i])
-        #
+            for hiddenNeuron in hiddenNeuronNames:
+                for i in range(0, len(self.sensorToHiddenWeights)):
+                    pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=hiddenNeuronNames[hiddenNeuron], weight=self.sensorToHiddenWeights[i])
+                for i in range(0, len(self.hiddenToMotorWeights)):
+                    pyrosim.Send_Synapse(sourceNeuronName=hiddenNeuronNames[hiddenNeuron], targetNeuronName=i+len(self.sensorToHiddenWeights), weight=self.hiddenToMotorWeights[i])
+        else:
+            for i in range(0, c.numSensorNeurons):
+                for j in range(0, len(self.weights[i])):
+                    pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=j + c.numSensorNeurons,
+                                         weight=self.weights[i][j])
         pyrosim.End()
 
     def Mutate(self):
