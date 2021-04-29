@@ -4,6 +4,7 @@ from motor import MOTOR
 import pyrosim.pyrosim as pyrosim
 import pybullet as p
 import os
+import constants as c
 
 class ROBOT:
 		
@@ -17,7 +18,9 @@ class ROBOT:
 		self.Prepare_To_Sense()
 		for jointName in pyrosim.jointNamesToIndices:
 			self.motors[jointName] = MOTOR(jointName, self.nn)
-		os.system("rm brain" + str(solutionID) + ".nndf")
+		# only save the last runs for fast simulation
+		if int(solutionID) < c.populationSize*(c.numberOfGenerations-1):
+			os.system("rm brain" + str(solutionID) + ".nndf")
 
 	def Prepare_To_Sense(self):
 		for linkName in pyrosim.linkNamesToIndices:

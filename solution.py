@@ -15,8 +15,8 @@ class SOLUTION:
 
         # Matrices to hold synaptic weights
         self.weights = numpy.zeros((c.numSensorNeurons, c.numMotorNeurons))
-        self.sensorToHiddenWeights = numpy.zeros((c.numSensorNeurons))
-        self.hiddenToMotorWeights = numpy.zeros((c.numMotorNeurons))
+        self.sensorToHiddenWeights = numpy.zeros((c.numSensorNeurons*c.numHiddenNeurons))
+        self.hiddenToMotorWeights = numpy.zeros((c.numMotorNeurons*c.numHiddenNeurons))
 
         # Set them, depending whether we are using hidden neurons or not.
         self.Set_Synaptic_Weights()
@@ -130,7 +130,7 @@ class SOLUTION:
             pyrosim.Send_Motor_Neuron(name=nameIndex, jointName=jointName)
             nameIndex += 1
 
-        if(self.useHiddenNeurons):
+        if self.useHiddenNeurons:
             hiddenNeuronNames = {}
             for i in range(0, c.numHiddenNeurons):
                 pyrosim.Send_Hidden_Neuron(name=nameIndex)
@@ -138,10 +138,12 @@ class SOLUTION:
                 nameIndex += 1
 
             for hiddenNeuron in hiddenNeuronNames:
-                for i in range(0, len(self.sensorToHiddenWeights)):
-                    pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=hiddenNeuronNames[hiddenNeuron], weight=self.sensorToHiddenWeights[i])
-                for i in range(0, len(self.hiddenToMotorWeights)):
-                    pyrosim.Send_Synapse(sourceNeuronName=hiddenNeuronNames[hiddenNeuron], targetNeuronName=i+len(self.sensorToHiddenWeights), weight=self.hiddenToMotorWeights[i])
+                for i in range(0, c.numSensorNeurons):
+                    weight_index = i + hiddenNeuron * c.numSensorNeurons
+                    pyrosim.Send_Synapse(sourceNeuronName=i, targetNeuronName=hiddenNeuronNames[hiddenNeuron], weight=self.sensorToHiddenWeights[weight_index])
+                for i in range(0, c.numMotorNeurons):
+                    weight_index = i + hiddenNeuron * c.numMotorNeurons
+                    pyrosim.Send_Synapse(sourceNeuronName=hiddenNeuronNames[hiddenNeuron], targetNeuronName=i+c.numSensorNeurons, weight=self.hiddenToMotorWeights[weight_index])
         else:
             for i in range(0, c.numSensorNeurons):
                 for j in range(0, len(self.weights[i])):
@@ -150,11 +152,19 @@ class SOLUTION:
         pyrosim.End()
 
     def Mutate(self):
-        synapseToMutate = random.randint(0, c.numSensorNeurons-2)
-        preOrPostSynapticNeuron = random.randint(0, 1)
-        self.weights[synapseToMutate][preOrPostSynapticNeuron] = random.random() * 2 - 1
-        self.sensorToHiddenWeights[synapseToMutate] = random.random() * 2 - 1
-        self.hiddenToMotorWeights[synapseToMutate] = random.random() * 2 - 1
-    
+        # TODO: Mutate method does not appear to be mutating the right weights in "original" mode
+        synapseToMutate = random.randint(0, c.numSensorNeurons-1)
+        preOrPostSynapticNeuron = random.randint(0, c.numMotorNeurons-1)
+
+        if self.useHiddenNeurons:
+            if (random.randint(0,1) == 1):
+                synapseToMutate = random.randint(0, len(self.sensorToHiddenWeights)-1)
+                self.sensorToHiddenWeights[synapseToMutate] = random.random() * 2 - 1
+            else:
+                synapseToMutate = random.randint(0,len(self.hiddenToMotorWeights)-1)
+                self.hiddenToMotorWeights[synapseToMutate] = random.random() * 2 - 1
+        else:
+            self.weights[synapseToMutate][preOrPostSynapticNeuron] = random.random() * 2 - 1
+
     def Set_ID(self, nextAvailableID):
         self.myID = nextAvailableID

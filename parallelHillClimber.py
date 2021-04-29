@@ -2,6 +2,7 @@ from solution import SOLUTION
 import constants as c
 import copy
 import numpy
+import os
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
@@ -11,7 +12,7 @@ class PARALLEL_HILL_CLIMBER:
         for i in range(0, c.populationSize):
             self.parents[i] = SOLUTION(self.nextAvailableID, useHiddenNeurons=self.useHiddenNeurons)
             self.nextAvailableID += 1
-        self.data = numpy.zeros((c.numberOfGenerations*c.populationSize, 2))
+        self.data = numpy.zeros((c.numberOfGenerations*c.populationSize+1, 2))
         
     def Evolve(self):
         self.Evaluate(self.parents)
@@ -34,7 +35,7 @@ class PARALLEL_HILL_CLIMBER:
 
     def Store_Data(self, currentGeneration):
         for parent in self.parents:
-            self.data[currentGeneration + parent] = [currentGeneration, self.children[parent].fitness - self.parents[parent].fitness]
+            self.data[currentGeneration + parent] = [currentGeneration, self.children[parent].fitness]
 
     def Print(self):
         for parent in self.parents:
@@ -60,9 +61,12 @@ class PARALLEL_HILL_CLIMBER:
     def Show_Best(self):
         minValue = min(self.parents, key=(lambda k: self.parents[k].fitness))
         print(self.parents[minValue].fitness)
+        print(self.parents[minValue].myID)
+        winningId = self.parents[minValue].myID
         self.Store_Data(c.numberOfGenerations)
         self.parents[minValue].Start_Simulation("GUI")
-        synapseMode = "hidden" + str(c.numHiddenNeurons) if self.useHiddenNeurons == True else "original"
-        numpy.save("data.nosync/performancePlot_" + synapseMode + ".npy", self.data)
+        synapseMode = "hidden" + str(c.numHiddenNeurons) if self.useHiddenNeurons is True else "original"
+        numpy.save("data.nosync/performancePlot_" + synapseMode + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) + ".npy", self.data)
+        os.system("mv  brain_"+str(winningId) +" data.nosync/brain_"+str(winningId) +"_" + synapseMode + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) +".nndf")
 
         pass
