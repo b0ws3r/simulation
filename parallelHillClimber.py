@@ -8,9 +8,9 @@ class PARALLEL_HILL_CLIMBER:
     def __init__(self):
         self.parents = {}
         self.nextAvailableID = 0
-        self.useHiddenNeurons = True
+        self.synapseMode = "RNN"
         for i in range(0, c.populationSize):
-            self.parents[i] = SOLUTION(self.nextAvailableID, useHiddenNeurons=self.useHiddenNeurons)
+            self.parents[i] = SOLUTION(self.nextAvailableID, synapseMode=self.synapseMode)
             self.nextAvailableID += 1
         self.data = numpy.zeros((c.numberOfGenerations*c.populationSize+1, 2))
         
@@ -64,9 +64,9 @@ class PARALLEL_HILL_CLIMBER:
         print(self.parents[minValue].myID)
         winningId = self.parents[minValue].myID
         self.Store_Data(c.numberOfGenerations)
+        # self.parents[minValue].Create_Cruel_World()
         self.parents[minValue].Start_Simulation("GUI")
-        synapseMode = "hidden" + str(c.numHiddenNeurons) if self.useHiddenNeurons is True else "original"
-        numpy.save("data.nosync/performancePlot_" + synapseMode + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) + ".npy", self.data)
-        os.system("mv  brain_"+str(winningId) +" data.nosync/brain_"+str(winningId) +"_" + synapseMode + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) +".nndf")
+        numpy.save("data.nosync/performancePlot_" + self.synapseMode + str(c.numHiddenNeurons)+"_"+ "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) + ".npy", self.data)
+        os.system("mv  brain_"+str(winningId) +" data.nosync/brain_"+str(winningId) +"_" + self.synapseMode + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) +".nndf")
 
         pass
