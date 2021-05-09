@@ -6,7 +6,7 @@ pi = numpy.pi
 
 numberOfGenerations = 50
 populationSize = 4
-numHiddenNeurons = 1
+numHiddenNeurons = 5
 
 numMotorNeurons = 8
 numSensorNeurons = 9

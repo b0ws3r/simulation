@@ -5,6 +5,7 @@ import pyrosim.pyrosim as pyrosim
 import pybullet as p
 import os
 import constants as c
+import numpy
 
 class ROBOT:
 		
@@ -42,7 +43,7 @@ class ROBOT:
 		stateOfLink0 = p.getLinkState(self.robot, 0)
 		# print("Get_Fitness state of Link 0: " + str(stateOfLink0))
 		positionOfLink0 = stateOfLink0[0]
-		xCoordinateOfLink0 = positionOfLink0[0]
+		xCoordinateOfLink0 = numpy.sqrt( positionOfLink0[0]**2 + positionOfLink0[1]**2)
 		solId = str(self.solutionID)
 		tempFileName = "data.nosync/tmp" + solId + ".txt"
 		f = open(tempFileName, "w")
