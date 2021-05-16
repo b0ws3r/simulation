@@ -4,12 +4,14 @@ import numpy
 simulationSteps = 1000
 pi = numpy.pi
 
-numberOfGenerations = 50
-populationSize = 4
-numHiddenNeurons = 5
+numberOfGenerations = 100
+populationSize = 2
+synapseMode = "RNN"
+numHiddenNeurons = 10
 
 numMotorNeurons = 8
 numSensorNeurons = 9
+
 BL_amplitude = pi/6
 BL_frequency = -10/(simulationSteps / (2*pi))
 BL_phaseOffset = 0

@@ -74,16 +74,6 @@ class SOLUTION:
                 pyrosim.Send_Cube(name="Box" + str(i) + "_" + str(j), pos=[c.x - i, c.y - j, height/2], size=[c.length, c.width, height])
         pyrosim.End()
 
-
-    def Create_Cruel_World(self):
-        pyrosim.Start_SDF("world.sdf")
-        sqr = 5
-        for i in range(-1 * sqr, sqr):
-            for j in range(-1*sqr, sqr):
-                height = numpy.random.rand()/2
-                pyrosim.Send_Cube(name="Box" + str(i) + "_" + str(j), pos=[c.x - i, c.y - j, height/2], size=[c.length, c.width, height])
-        pyrosim.End()
-
     def Create_Body(self):
         pyrosim.Start_URDF("body.urdf")
         pyrosim.Send_Cube(name="Torso", pos=[c.x, c.y,  c.zStart], size=[c.length, c.width, c.height])

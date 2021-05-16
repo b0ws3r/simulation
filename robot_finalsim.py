@@ -7,22 +7,24 @@ import os
 import constants as c
 import numpy
 
-class ROBOT:
-		
-	def __init__(self, solutionID):
+class ROBOT_FINAL:
+
+	def __init__(self, nndfFileName):
+		poopypath = '/Users/westlands/Documents/Missy/College/Complex Systems/CS206/assignment_1'
+
 		self.motors = {}
 		self.sensors = {}
-		self.solutionID = solutionID
-		self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
-		# self.nn = NEURAL_NETWORK("data.nosync/brain_38_RNN1_100x2.nndf")
-		self.robot = bodyId = p.loadURDF("body.urdf")
-		pyrosim.Prepare_To_Simulate("body.urdf")
+		# self.solutionID = solutionID
+		# self.nn = NEURAL_NETWORK("brain" + str(solutionID) + ".nndf")
+		self.nn = NEURAL_NETWORK(nndfFileName)
+		self.robot = bodyId = p.loadURDF(poopypath + "/body.urdf")
+		pyrosim.Prepare_To_Simulate(poopypath+ "/body.urdf")
 		self.Prepare_To_Sense()
 		for jointName in pyrosim.jointNamesToIndices:
 			self.motors[jointName] = MOTOR(jointName, self.nn)
-		# only save the last runs for fast simulation
-		if int(solutionID) < c.populationSize*(c.numberOfGenerations-1):
-			os.system("rm brain" + str(solutionID) + ".nndf")
+		# # only save the last runs for fast simulation
+		# if int(solutionID) < c.populationSize*(c.numberOfGenerations-1):
+		# 	os.system("rm brain" + str(solutionID) + ".nndf")
 
 	def Prepare_To_Sense(self):
 		for linkName in pyrosim.linkNamesToIndices:
@@ -45,9 +47,11 @@ class ROBOT:
 		# print("Get_Fitness state of Link 0: " + str(stateOfLink0))
 		positionOfLink0 = stateOfLink0[0]
 		xCoordinateOfLink0 = numpy.sqrt( positionOfLink0[0]**2 + positionOfLink0[1]**2)
-		solId = str(self.solutionID)
-		tempFileName = "data.nosync/tmp" + solId + ".txt"
-		f = open(tempFileName, "w")
-		f.write(str(xCoordinateOfLink0))
-		os.system("mv " + tempFileName + " data.nosync/fitness" + solId + ".txt")
+		# solId = str(self.solutionID)
+		# tempFileName = "data.nosync/tmp" + solId + ".txt"
+		# f = open(tempFileName, "w")
+		# f.write(str(xCoordinateOfLink0))
+		print(str(xCoordinateOfLink0))
+		# os.system("mv " + tempFileName + " data.nosync/fitness" + solId + ".txt")
 		# exit()
+		p.disconnect()

@@ -8,7 +8,7 @@ class PARALLEL_HILL_CLIMBER:
     def __init__(self):
         self.parents = {}
         self.nextAvailableID = 0
-        self.synapseMode = "RNN"
+        self.synapseMode = c.synapseMode
         for i in range(0, c.populationSize):
             self.parents[i] = SOLUTION(self.nextAvailableID, synapseMode=self.synapseMode)
             self.nextAvailableID += 1
@@ -59,14 +59,14 @@ class PARALLEL_HILL_CLIMBER:
                 self.parents[parent] = self.children[parent]
 
     def Show_Best(self):
-        minValue = min(self.parents, key=(lambda k: self.parents[k].fitness))
-        print(self.parents[minValue].fitness)
-        print(self.parents[minValue].myID)
-        winningId = self.parents[minValue].myID
+        maxValue = max(self.parents, key=(lambda k: self.parents[k].fitness))
+        print(self.parents[maxValue].fitness)
+        print(self.parents[maxValue].myID)
+        winningId = self.parents[maxValue].myID
         self.Store_Data(c.numberOfGenerations)
-        # self.parents[minValue].Create_Cruel_World()
-        self.parents[minValue].Start_Simulation("GUI")
+        self.parents[maxValue].Start_Simulation("GUI")
         numpy.save("data.nosync/performancePlot_" + self.synapseMode + str(c.numHiddenNeurons)+"_"+ "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) + ".npy", self.data)
-        os.system("mv  brain_"+str(winningId) +" data.nosync/brain_"+str(winningId) +"_" + self.synapseMode + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) +".nndf")
+        os.system("mv  brain"+str(winningId) +".nndf data.nosync/brain_"+str(winningId) + "_" + self.synapseMode + str(c.numHiddenNeurons) + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) +".nndf")
+        os.system("mv world.sdf data.nosync/world_" + self.synapseMode + str(c.numHiddenNeurons) + "_" + str(c.numberOfGenerations) + "x" + str(c.populationSize) +".sdf")
 
-        pass
+        # pass
